@@ -12,8 +12,6 @@ import dagger.Binds;
 import dagger.BindsInstance;
 import dagger.Component;
 import dagger.Module;
-import dagger.Provides;
-import dagger.android.AndroidInjection;
 import dagger.android.ContributesAndroidInjector;
 import dagger.android.support.AndroidSupportInjectionModule;
 import dagger.android.support.DaggerAppCompatActivity;
@@ -25,7 +23,6 @@ public class MainActivity extends DaggerAppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         TextView label = findViewById(R.id.label);
@@ -49,27 +46,25 @@ interface AppComponent {
 }
 
 @Module
-class AppModule {
-    @Provides
+interface AppModule {
+    @Binds
     @Singleton
-    Context provideContext(Application application) {
-        return application;
-    }
+    Context bindContext(Application application);
 
 }
 
 @Module
-abstract class ActivityBuilder {
+interface ActivityBuilder {
     @SubScope
     @ContributesAndroidInjector(modules = MainActivityModule.class)
-    abstract MainActivity bindMainActivity();
+    MainActivity bindMainActivity();
 }
 
 @Module
 interface MainActivityModule {
     @Binds
     @SubScope
-    Dependency provideDependencyOne(DependencyOne dependencyOne);
+    Dependency bindDependencyOne(DependencyOne dependencyOne);
 }
 
 interface Dependency {
